@@ -13,6 +13,6 @@ public class StoredIntController {
 
   @GetMapping("/stored-int")
   public int getStoredInt() throws IOException {
-      return service.getIntValue();
+    return service.getIntValue();
   }
 }

@@ -22,20 +22,20 @@ public class StoredIntService {
   }
 
   private void writeValue() throws IOException {
-        String tmpDir = System.getProperty("java.io.tmpdir");
-        File file = new File(tmpDir, "stored-int.txt");
+    String tmpDir = System.getProperty("java.io.tmpdir");
+    File file = new File(tmpDir, "stored-int.txt");
 
-        File tmpDirectory = new File(tmpDir);
-        if (!tmpDirectory.exists() || !tmpDirectory.isDirectory() || !tmpDirectory.canWrite()) {
-            throw new IOException("Temporary directory is not accessible or writable: " + tmpDir);
-        }
+    File tmpDirectory = new File(tmpDir);
+    if (!tmpDirectory.exists() || !tmpDirectory.isDirectory() || !tmpDirectory.canWrite()) {
+      throw new IOException("Temporary directory is not accessible or writable: " + tmpDir);
+    }
 
-        if (!file.exists() && !file.createNewFile()) {
-            throw new IOException("Failed to create file: " + file.getAbsolutePath());
-        }
+    if (!file.exists() && !file.createNewFile()) {
+      throw new IOException("Failed to create file: " + file.getAbsolutePath());
+    }
 
-        try (FileWriter writer = new FileWriter(file)) {
-            writer.write(String.valueOf(new Random().nextInt()));
-        }
+    try (FileWriter writer = new FileWriter(file)) {
+      writer.write(String.valueOf(new Random().nextInt()));
+    }
   }
 }
