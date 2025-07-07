@@ -5,8 +5,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Random;
 import java.util.Scanner;
+
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class StoredIntService {
   public int getIntValue() throws IOException {
@@ -36,6 +39,7 @@ public class StoredIntService {
 
     try (FileWriter writer = new FileWriter(file)) {
       writer.write(String.valueOf(new Random().nextInt()));
+      log.info("Successfully wrote stored-int to file: " + file.getAbsolutePath());
     }
   }
 }
