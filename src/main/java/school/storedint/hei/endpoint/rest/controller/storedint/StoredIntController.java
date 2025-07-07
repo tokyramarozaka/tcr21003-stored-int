@@ -12,11 +12,7 @@ public class StoredIntController {
   private StoredIntService service;
 
   @GetMapping("/stored-int")
-  public int getStoredInt() {
-    try {
+  public int getStoredInt() throws IOException {
       return service.getIntValue();
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
   }
 }

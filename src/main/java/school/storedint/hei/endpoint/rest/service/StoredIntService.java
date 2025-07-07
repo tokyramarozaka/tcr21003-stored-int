@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 public class StoredIntService {
   public int getIntValue() throws IOException {
     var file = new File("tmp/stored-int.txt");
-    if (!file.exists()) writeValue(file);
+    if (!file.exists()) writeValue();
 
     return readValue(file);
   }
@@ -21,20 +21,21 @@ public class StoredIntService {
     return scanner.nextInt();
   }
 
-  private void writeValue(File file) throws IOException {
-    var parentDir = file.getParentFile();
-    if (parentDir != null && !parentDir.exists()) {
-      if (!parentDir.mkdirs()) {
-        throw new IOException(
-            "Failed to create parent directories: " + parentDir.getAbsolutePath());
-      }
-    }
-    if (!file.exists() && !file.createNewFile()) {
-      throw new IOException("Failed to create file: " + file.getAbsolutePath());
-    }
+  private void writeValue() throws IOException {
+        String tmpDir = System.getProperty("java.io.tmpdir");
+        File file = new File(tmpDir, "stored-int.txt");
 
-    try (var writer = new FileWriter(file)) {
-      writer.write(new Random().nextInt());
-    }
+        File tmpDirectory = new File(tmpDir);
+        if (!tmpDirectory.exists() || !tmpDirectory.isDirectory() || !tmpDirectory.canWrite()) {
+            throw new IOException("Temporary directory is not accessible or writable: " + tmpDir);
+        }
+
+        if (!file.exists() && !file.createNewFile()) {
+            throw new IOException("Failed to create file: " + file.getAbsolutePath());
+        }
+
+        try (FileWriter writer = new FileWriter(file)) {
+            writer.write(String.valueOf(new Random().nextInt()));
+        }
   }
 }
