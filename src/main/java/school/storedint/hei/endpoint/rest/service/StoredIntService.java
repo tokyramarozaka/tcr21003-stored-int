@@ -12,8 +12,25 @@ import org.springframework.stereotype.Service;
 @Service
 public class StoredIntService {
   public int getIntValue() throws IOException {
-    var file = new File("tmp/stored-int.txt");
-    if (!file.exists()) writeValue();
+    String tmpDir = System.getProperty("java.io.tmpdir");
+    if (tmpDir == null || tmpDir.isEmpty()) {
+      throw new IOException("java.io.tmpdir is not set");
+    }
+    File file = new File(tmpDir, "stored-int.txt");
+    File tmpDirectory = new File(tmpDir);
+    if (!tmpDirectory.exists()) {
+      throw new IOException("Temporary directory does not exist: " + tmpDir);
+    }
+    if (!tmpDirectory.isDirectory()) {
+      throw new IOException("Temporary path is not a directory: " + tmpDir);
+    }
+    if (!tmpDirectory.canWrite()) {
+      throw new IOException("Temporary directory is not writable: " + tmpDir);
+    }
+
+    if (!file.exists()) {
+      writeValue();
+    }
 
     return readValue(file);
   }
