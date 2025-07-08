@@ -25,20 +25,37 @@ public class StoredIntService {
 
   private void writeValue() throws IOException {
     String tmpDir = System.getProperty("java.io.tmpdir");
+    if (tmpDir == null || tmpDir.isEmpty()) {
+      throw new IOException("java.io.tmpdir is not set");
+    }
+
     File file = new File(tmpDir, "stored-int.txt");
 
     File tmpDirectory = new File(tmpDir);
-    if (!tmpDirectory.exists() || !tmpDirectory.isDirectory() || !tmpDirectory.canWrite()) {
-      throw new IOException("Temporary directory is not accessible or writable: " + tmpDir);
+    if (!tmpDirectory.exists()) {
+      throw new IOException("Temporary directory does not exist: " + tmpDir);
+    }
+    if (!tmpDirectory.isDirectory()) {
+      throw new IOException("Temporary path is not a directory: " + tmpDir);
+    }
+    if (!tmpDirectory.canWrite()) {
+      throw new IOException("Temporary directory is not writable: " + tmpDir);
     }
 
-    if (!file.exists() && !file.createNewFile()) {
-      throw new IOException("Failed to create file: " + file.getAbsolutePath());
+    try {
+      if (!file.exists() && !file.createNewFile()) {
+        throw new IOException("Failed to create file: " + file.getAbsolutePath());
+      }
+    } catch (IOException e) {
+      throw new IOException(
+          "Error creating file: " + file.getAbsolutePath() + "; " + e.getMessage());
     }
 
     try (FileWriter writer = new FileWriter(file)) {
       writer.write(String.valueOf(new Random().nextInt()));
-      log.info("Successfully wrote stored-int to file: " + file.getAbsolutePath());
+    } catch (IOException e) {
+      throw new IOException(
+          "Error writing to file: " + file.getAbsolutePath() + "; " + e.getMessage());
     }
   }
 }
